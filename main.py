@@ -7,13 +7,14 @@ from winreg import ConnectRegistry, OpenKey, EnumValue, HKEY_CURRENT_USER
 import icons
 from prevent_sleep_win import updatePreventionState
 
-VERSION = '1.1'
+VERSION = '1.2'
 
 
 class App:
     _enabled = False  # Sleep prevention enabled
     _timerId = -1  # Timer id used to prevent multiple timers disabling each other
     _timerActive = False  # Used for showing checked status in menu
+    _requireDisplay = True  # Whether display needs to be turned on or off (system won't sleep either)
 
     def __init__(self):
         self._trayIcon = Icon('Sleepkiller', self.getCurrentIcon(), menu=Menu(
@@ -67,6 +68,12 @@ class App:
             ),
             Menu.SEPARATOR,
             MenuItem(
+                'Allow screen to turn off',
+                action=lambda: self.toggleDisplayRequirement(),
+                checked=lambda item: not self._requireDisplay,
+            ),
+            Menu.SEPARATOR,
+            MenuItem(
                 'Quit',
                 lambda icon, item: icon.stop(),
             ),
@@ -94,12 +101,15 @@ class App:
 
     def onClick(self, icon, _):
         self._enabled = not self._enabled
-        updatePreventionState(self._enabled)
+        updatePreventionState(self._enabled, self._requireDisplay)
 
         icon.icon = self.getCurrentIcon()
 
         if not self._enabled and self._timerActive:
             self._timerActive = False
+
+    def toggleDisplayRequirement(self):
+        self._requireDisplay = not self._requireDisplay
 
     def delayFunction(self, minutes):
         self._timerId += 1
@@ -107,7 +117,7 @@ class App:
         self._timerActive = True
 
         self._enabled = True
-        updatePreventionState(self._enabled)
+        updatePreventionState(self._enabled, self._requireDisplay)
 
         self._trayIcon.update_menu()  # should be called after changing self.enabled and self.timerActive
         self._trayIcon.icon = self.getCurrentIcon()

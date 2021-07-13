@@ -7,9 +7,12 @@ ES_AWAYMODE_REQUIRED = 0x00000040  # not used
 ES_DISPLAY_REQUIRED = 0x00000002
 
 
-def updatePreventionState(state=None):
+def updatePreventionState(state=None, requireDisplay=True):
     if state:
-        threadExecState = ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED
+        if requireDisplay:
+            threadExecState = ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED
+        else:
+            threadExecState = ES_CONTINUOUS | ES_SYSTEM_REQUIRED
     else:
         threadExecState = ES_CONTINUOUS
 

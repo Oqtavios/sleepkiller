@@ -1,4 +1,4 @@
 pystray~=0.17.2
-pillow~=8.1.0
-pyinstaller~=4.1
+pillow~=8.3.0
+pyinstaller~=4.4
 pypiwin32~=223
