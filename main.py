@@ -7,7 +7,7 @@ from winreg import ConnectRegistry, OpenKey, EnumValue, HKEY_CURRENT_USER
 import icons
 from prevent_sleep_win import updatePreventionState
 
-VERSION = '1.2'
+VERSION = '1.3'
 
 
 class App:
@@ -89,7 +89,7 @@ class App:
 
         for i in range(128):  # 128 should be enough for the registry key used here
             name, value, valueType = EnumValue(key, i)
-            if name == 'AppsUseLightTheme':
+            if name == 'SystemUsesLightTheme':
                 return value == 0
         return True  # if can't get the value
 
