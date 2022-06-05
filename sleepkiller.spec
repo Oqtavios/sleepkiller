@@ -28,4 +28,5 @@ exe = EXE(pyz,
           upx_exclude = ['vcruntime140.dll'],
           console=False,
           icon='icon.ico',
+          #version='version_file.txt',
       )

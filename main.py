@@ -7,7 +7,7 @@ from winreg import ConnectRegistry, OpenKey, EnumValue, HKEY_CURRENT_USER
 import icons
 from prevent_sleep_win import updatePreventionState
 
-VERSION = '1.3'
+VERSION = '1.4'
 
 
 class App:
@@ -15,6 +15,7 @@ class App:
     _timerId = -1  # Timer id used to prevent multiple timers disabling each other
     _timerActive = False  # Used for showing checked status in menu
     _requireDisplay = True  # Whether display needs to be turned on or off (system won't sleep either)
+    #_lastThemeWasDark = False
 
     def __init__(self):
         self._trayIcon = Icon('Sleepkiller', self.getCurrentIcon(), menu=Menu(
@@ -80,7 +81,17 @@ class App:
         ))
 
     def run(self):
+        Thread(target=self.iconRefresher, daemon=True).start()
         self._trayIcon.run()
+
+    def iconRefresher(self):
+        while True:
+            sleep(5)
+            # Refreshing icon every time because of Windows bug which reverts to previous icon after changing theme from dark to light
+            # so, that's what happens: Switching theme -> Sleepkiller icon refreshes to correct -> Theme switching is done -> Windows restores previous Sleepkiller icon
+            #if self._lastThemeWasDark != self.isDarkBackground():
+            #    self._lastThemeWasDark = not self._lastThemeWasDark
+            self._trayIcon.icon = self.getCurrentIcon()
 
     @staticmethod
     def isDarkBackground():
